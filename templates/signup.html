@@ -1,0 +1,230 @@
+<!-- signup.html -->
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+    /* login.css */
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+header nav {
+    background-color: #007bff;
+    padding: 15px;
+}
+
+header nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+header nav ul li {
+    display: inline;
+}
+
+header nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+header nav ul li a:hover {
+    text-decoration: none;
+    color: rgb(197, 228, 255);
+}
+
+.login-container {
+    max-width: 500px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+h2 {
+    text-align: center;
+    color: #333;
+}
+
+/* Form Styling */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+form div {
+    display: flex;
+    flex-direction: column;
+}
+
+form label {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+form input, form select {
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+form input:focus, form select:focus {
+    border-color: #007BFF;
+    outline: none;
+}
+
+form .error {
+    color: red;
+    font-size: 12px;
+}
+
+/* Button Styling */
+button {
+    padding: 12px 20px;
+    background-color: #007BFF;
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Responsive Styling */
+@media (max-width: 600px) {
+    header nav ul {
+        display: block;
+        text-align: left;
+    }
+
+    header nav ul li {
+        display: block;
+        margin-right: 0;
+    }
+}
+/*
+.login-container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    text-align: center;
+}
+
+.login-container h2 {
+    font-size: 1.8em;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+form p {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+button {
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+
+*/
+</style>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'about' %}">About</a></li>
+                <li><a href="{% url 'menu' %}">Menu</a></li>
+                <li><a href="{% url 'reservation' %}">Reservations</a></li>
+                <li><a href="{% url 'login' %}">Login</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="login-container">
+        <h2>Sign Up</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        
+        <div>
+            <label for="username">Username:</label>
+            {{ form.username }}
+            {{ form.username.errors }}
+        </div>
+    
+        <div>
+            <label for="password">Password:</label>
+            {{ form.password }}
+            {{ form.password.errors }}
+        </div>
+    
+        <div>
+            <label for="name">Name:</label>
+            {{ form.name }}
+            {{ form.name.errors }}
+        </div>
+    
+        <div>
+            <label for="email">Email:</label>
+            {{ form.email }}
+            {{ form.email.errors }}
+        </div>
+    
+        <div>
+            <label for="phone_number">Phone Number:</label>
+            {{ form.phone_number }}
+            {{ form.phone_number.errors }}
+        </div>
+    
+        <div>
+            <label for="role">Role:</label>
+            {{ form.role }}
+            {{ form.role.errors }}
+        </div>
+    
+        <button type="submit">Sign Up</button>
+    </form>
+    </div>
+</body>
+</html>
+
