@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-898s=6eh924kc9&l%v1bhf&sr%q8ukylp*g-9l6z#_u2-g49wq
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['restaurant-management-8g3g.onrender.com', '127.0.0.1']
+ALLOWED_HOSTS = ['restaurant-management-8g3g.onrender.com', '127.0.0.1', 'restaurant-api-gqoe.onrender.com']
 
 
 AUTH_USER_MODEL = 'core.User'
