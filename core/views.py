@@ -524,7 +524,7 @@ from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from .models import User, Menu, MenuGroup, MenuItem, Reservation, Order, Table, UnregisteredOrder
 from .serializers import UserSerializer, MenuSerializer, MenuGroupSerializer, MenuItemSerializer, ReservationSerializer, OrderSerializer, TableSerializer, UnregisteredOrderSerializer
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
 from rest_framework import status
 from rest_framework.response import Response
 
@@ -548,7 +548,10 @@ class MenuListCreateAPIView(generics.ListCreateAPIView):
 class MenuRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Menu.objects.all()
     serializer_class = MenuSerializer
-    permission_classes = [IsAuthenticated]
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve']:  # Public GET requests
+            return [AllowAny()]
+        return [IsAuthenticated()]  # Other requests require authentication
 
 # Menu Group Views
 class MenuGroupListCreateAPIView(generics.ListCreateAPIView):
@@ -559,7 +562,10 @@ class MenuGroupListCreateAPIView(generics.ListCreateAPIView):
 class MenuGroupRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = MenuGroup.objects.all()
     serializer_class = MenuGroupSerializer
-    permission_classes = [IsAuthenticated]
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve']:  # Public GET requests
+            return [AllowAny()]
+        return [IsAuthenticated()]  # Other requests require authentication
 
 # Menu Item Views
 class MenuItemListCreateAPIView(generics.ListCreateAPIView):
@@ -570,7 +576,10 @@ class MenuItemListCreateAPIView(generics.ListCreateAPIView):
 class MenuItemRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = MenuItem.objects.all()
     serializer_class = MenuItemSerializer
-    permission_classes = [IsAuthenticated]
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve']:  # Public GET requests
+            return [AllowAny()]
+        return [IsAuthenticated()]  # Other requests require authentication
 
 # Reservation Views
 class ReservationListCreateAPIView(generics.ListCreateAPIView):
