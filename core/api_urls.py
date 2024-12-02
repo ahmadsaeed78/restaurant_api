@@ -33,6 +33,9 @@ urlpatterns = [
     # Unregistered Order APIs
     path('unregistered_orders/', views.UnregisteredOrderListCreateAPIView.as_view(), name='unregistered-order-list-create'),
     path('unregistered_orders/<int:pk>/', views.UnregisteredOrderRetrieveUpdateDestroyAPIView.as_view(), name='unregistered-order-detail'),
+
+    # Herirchy response
+    path('menu_herirchy/', views.MenuListView.as_view(), name='menu-list'),
 ]
 
 # For token authentication:

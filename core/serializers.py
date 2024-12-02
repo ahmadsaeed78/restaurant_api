@@ -98,3 +98,28 @@ class UnregisteredOrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = UnregisteredOrder
         fields = ['id', 'menu_item', 'quantity', 'customer_name', 'table', 'order_time', 'status']
+
+
+
+#generate herirchy response
+from rest_framework import serializers
+from .models import Menu, MenuGroup, MenuItem
+
+class MenuItemsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MenuItem
+        fields = ['id', 'name', 'price', 'description', 'image', 'available']
+
+class MenuGroupsSerializer(serializers.ModelSerializer):
+    items = MenuItemsSerializer(many=True, read_only=True)  # Nested MenuItem serializer
+
+    class Meta:
+        model = MenuGroup
+        fields = ['id', 'name', 'description', 'image', 'items']
+
+class MenusSerializer(serializers.ModelSerializer):
+    groups = MenuGroupsSerializer(many=True, read_only=True)  # Nested MenuGroup serializer
+
+    class Meta:
+        model = Menu
+        fields = ['id', 'name', 'description', 'groups']
