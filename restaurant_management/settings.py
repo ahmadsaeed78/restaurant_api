@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'core',
     'rest_framework',  # For API development
     'rest_framework.authtoken',
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
@@ -69,6 +70,11 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+MIDDLEWARE.insert(0, "corsheaders.middleware.CorsMiddleware")
+
+# Allow all origins (for testing purposes only, restrict in production)
+CORS_ALLOW_ALL_ORIGINS = True
 
 ROOT_URLCONF = 'restaurant_management.urls'
 
