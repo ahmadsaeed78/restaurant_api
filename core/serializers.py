@@ -123,3 +123,19 @@ class MenusSerializer(serializers.ModelSerializer):
     class Meta:
         model = Menu
         fields = ['id', 'name', 'description', 'groups']
+
+
+
+
+#two level herirchy pass
+class MenuItemTwoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MenuItem
+        fields = ['id', 'name', 'price', 'description', 'image', 'available']
+
+class MenuGroupTwoSerializer(serializers.ModelSerializer):
+    items = MenuItemTwoSerializer(many=True, read_only=True)  # Nest MenuItems here
+
+    class Meta:
+        model = MenuGroup
+        fields = ['id', 'name', 'description', 'image', 'items']

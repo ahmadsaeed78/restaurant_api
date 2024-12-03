@@ -36,6 +36,7 @@ urlpatterns = [
 
     # Herirchy response
     path('menu_herirchy/', views.MenuListView.as_view(), name='menu-list'),
+    path('menu_group_hierarchy/', views.MenuGroupHierarchyView.as_view(), name='menu-group'),
 ]
 
 # For token authentication:

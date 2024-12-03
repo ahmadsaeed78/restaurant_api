@@ -593,6 +593,15 @@ class MenuListView(APIView):
         menus = Menu.objects.filter(is_active=True)  # Fetch only active menus
         serializer = MenusSerializer(menus, many=True)
         return Response(serializer.data)
+    
+
+from .serializers import MenuGroupTwoSerializer
+from rest_framework.generics import ListAPIView
+#two level herirchy pass
+class MenuGroupHierarchyView(ListAPIView):
+    queryset = MenuGroup.objects.prefetch_related('items').filter(is_active=True)
+    serializer_class = MenuGroupTwoSerializer
+    permission_classes = [AllowAny]  # Public access
 
 
 # Reservation Views
