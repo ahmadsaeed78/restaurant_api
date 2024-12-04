@@ -420,6 +420,7 @@ def manage_tables_chief(request):
 def generate_table_qr(request, table_id):
     table = Table.objects.get(id=table_id)
     url = request.build_absolute_uri(reverse('scan_menu') + f"?table_number={table.table_number}")
+    url_api = "localhost:3000/menus/" + f"{table.table_number}"
     
     # Generate QR code
     qr = qrcode.QRCode(
@@ -428,7 +429,7 @@ def generate_table_qr(request, table_id):
         box_size=10,
         border=4,
     )
-    qr.add_data(url)
+    qr.add_data(url_api)
     qr.make(fit=True)
 
     # Create an image of the QR code
