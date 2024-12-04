@@ -642,8 +642,37 @@ class UnregisteredOrderListCreateAPIView(generics.ListCreateAPIView):
     permission_classes = [AllowAny]
     queryset = UnregisteredOrder.objects.all()
     serializer_class = UnregisteredOrderSerializer
+    def perform_create(self, serializer):
+        # Save the order instance
+        instance = serializer.save()
+        
+        # Update the table's is_booked field
+        if instance.table:
+            table = instance.table
+            table.is_booked = True
+            table.save()
 
 class UnregisteredOrderRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = UnregisteredOrder.objects.all()
     serializer_class = UnregisteredOrderSerializer
     permission_classes = [IsAuthenticated]
+
+
+
+#get all tables
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
+from .models import Table
+from .serializers import TableSerializer
+
+class TableListAPIView(APIView):
+    permission_classes = [AllowAny]  # Allow access without authentication
+
+    def get(self, request, *args, **kwargs):
+        """
+        Handles GET requests to retrieve all tables.
+        """
+        tables = Table.objects.all()  # Fetch all tables from the database
+        serializer = TableSerializer(tables, many=True)
+        return Response(serializer.data)

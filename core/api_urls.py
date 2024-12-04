@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from .views import TableListAPIView
 
 urlpatterns = [
     # User API
@@ -37,6 +38,7 @@ urlpatterns = [
     # Herirchy response
     path('menu_herirchy/', views.MenuListView.as_view(), name='menu-list'),
     path('menu_group_hierarchy/', views.MenuGroupHierarchyView.as_view(), name='menu-group'),
+    path('api/tables/', TableListAPIView.as_view(), name='table-list'),
 ]
 
 # For token authentication:
