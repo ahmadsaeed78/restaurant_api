@@ -57,7 +57,7 @@ class MenuGroup(models.Model):
     def __str__(self):
         return self.name
 
-
+import random
 class MenuItem(models.Model):
     menugroup = models.ForeignKey(MenuGroup, related_name="items", on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
@@ -65,7 +65,7 @@ class MenuItem(models.Model):
     description = models.TextField()
     image = models.ImageField(upload_to='menu_images/', null=True, blank=True)
     available = models.BooleanField(default=True)
-    rating = models.IntegerField(default=1, choices=[(i, str(i)) for i in range(1, 6)])  # Rating between 1 and 5
+    rating = models.IntegerField(default=random.randint(1, 5), choices=[(i, str(i)) for i in range(1, 6)])  # Rating between 1 and 5
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

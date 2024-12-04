@@ -639,9 +639,9 @@ class TableRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
 
 # Unregistered Order Views
 class UnregisteredOrderListCreateAPIView(generics.ListCreateAPIView):
+    permission_classes = [AllowAny]
     queryset = UnregisteredOrder.objects.all()
     serializer_class = UnregisteredOrderSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
 
 class UnregisteredOrderRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = UnregisteredOrder.objects.all()
