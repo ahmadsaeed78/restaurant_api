@@ -73,7 +73,7 @@ class MenuGroupSerializer(serializers.ModelSerializer):
 class MenuItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = MenuItem
-        fields = ['id', 'menugroup', 'name', 'price', 'description', 'image', 'available', 'created_at', 'updated_at']
+        fields = ['id', 'menugroup', 'name', 'price', 'description', 'image', 'available', 'rating', 'created_at', 'updated_at']
 
 # Reservation serializer
 class ReservationSerializer(serializers.ModelSerializer):
@@ -131,7 +131,7 @@ class MenusSerializer(serializers.ModelSerializer):
 class MenuItemTwoSerializer(serializers.ModelSerializer):
     class Meta:
         model = MenuItem
-        fields = ['id', 'name', 'price', 'description', 'image', 'available']
+        fields = ['id', 'name', 'price', 'description', 'image', 'available', 'rating']
 
 class MenuGroupTwoSerializer(serializers.ModelSerializer):
     items = MenuItemTwoSerializer(many=True, read_only=True)  # Nest MenuItems here

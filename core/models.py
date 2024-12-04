@@ -65,6 +65,7 @@ class MenuItem(models.Model):
     description = models.TextField()
     image = models.ImageField(upload_to='menu_images/', null=True, blank=True)
     available = models.BooleanField(default=True)
+    rating = models.IntegerField(default=1, choices=[(i, str(i)) for i in range(1, 6)])  # Rating between 1 and 5
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
