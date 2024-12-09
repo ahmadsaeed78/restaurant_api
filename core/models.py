@@ -117,3 +117,15 @@ class UnregisteredOrder(models.Model):
 
     def __str__(self):
         return f"Order: {self.menu_item.name} (Table {self.table.table_number if self.table else 'N/A'}) (Status: {self.get_status_display()})"
+
+
+
+class Contact(models.Model):
+    name = models.CharField(max_length=100)
+    email = models.EmailField()
+    subject = models.CharField(max_length=200)
+    phone_no = models.CharField(max_length=15)
+    message = models.TextField()
+
+    def __str__(self):
+        return f"{self.name} - {self.subject}"

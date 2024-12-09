@@ -139,3 +139,14 @@ class MenuGroupTwoSerializer(serializers.ModelSerializer):
     class Meta:
         model = MenuGroup
         fields = ['id', 'name', 'description', 'image', 'items']
+
+
+
+
+
+from .models import Contact
+
+class ContactSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Contact
+        fields = ['id', 'name', 'email', 'subject', 'phone_no', 'message']
