@@ -541,34 +541,43 @@ class UserRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated]
 
 # Menu Views
-class MenuListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Menu.objects.all()
-    serializer_class = MenuSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
 
-from rest_framework.generics import RetrieveUpdateDestroyAPIView
-from rest_framework.response import Response
-from rest_framework import status
+
+# views.py
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from .models import Menu
 from .serializers import MenuSerializer
-import logging
+from rest_framework.response import Response
+from rest_framework import status
 
-logger = logging.getLogger(__name__)
+class MenuListCreateAPIView(ListCreateAPIView):
+    queryset = Menu.objects.all()
+    serializer_class = MenuSerializer
+    permission_classes = [IsAuthenticated]  # Ensure the user is authenticated to perform actions
+    
+    def perform_create(self, serializer):
+        # Assign the user who created the menu (optional)
+        serializer.save()
 
 class MenuRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     queryset = Menu.objects.all()
     serializer_class = MenuSerializer
+    permission_classes = [IsAuthenticated]  # Ensure the user is authenticated to perform actions
+
+    def perform_update(self, serializer):
+        # Optionally, update the modified by user (if needed)
+        serializer.save(modified_by=self.request.user)
 
     def delete(self, request, *args, **kwargs):
         try:
             instance = self.get_object()  # Get the menu instance
-            logger.info(f"Attempting to delete Menu: {instance.id}")  # Log the delete attempt
             instance.delete()  # Delete the item
-            logger.info(f"Menu {instance.id} deleted successfully.")
             return Response(status=status.HTTP_204_NO_CONTENT)  # Return success with no content
         except Menu.DoesNotExist:
-            logger.error(f"Menu with ID {kwargs['pk']} not found.")
             return Response({"error": "Menu item not found."}, status=status.HTTP_404_NOT_FOUND)
+
+
 
 
 
