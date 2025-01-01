@@ -613,15 +613,19 @@ class MenuItemRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
 from .models import Menu
 from .serializers import MenusSerializer
 
 class MenuListView(APIView):
     permission_classes = [AllowAny]
+    
     def get(self, request):
         menus = Menu.objects.filter(is_active=True)  # Fetch only active menus
-        serializer = MenusSerializer(menus, many=True)
+        # Pass the request context to the serializer
+        serializer = MenusSerializer(menus, many=True, context={'request': request})
         return Response(serializer.data)
+
     
 
 from .serializers import MenuGroupTwoSerializer
