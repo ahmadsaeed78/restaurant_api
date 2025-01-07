@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .views import TableListAPIView, ContactAPIView
+from .views import TableListAPIView, ContactAPIView, update_item_availability
 
 urlpatterns = [
     # User API
@@ -40,6 +40,7 @@ urlpatterns = [
     path('menu_group_hierarchy/', views.MenuGroupHierarchyView.as_view(), name='menu-group'),
     path('api/tables/', TableListAPIView.as_view(), name='table-list'),
     path('contact/', ContactAPIView.as_view(), name='contact_api'),
+    path('menu_items/<int:item_id>/availability/', update_item_availability, name='update_item_availability'),
 ]
 
 # For token authentication:

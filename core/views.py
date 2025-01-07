@@ -781,3 +781,33 @@ class LoginAPIView(APIView):
             {"error": "Invalid credentials."},
             status=status.HTTP_401_UNAUTHORIZED,
         )
+
+
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.decorators import api_view, permission_classes
+from .models import MenuItem
+from .serializers import MenuItemSerializer
+from rest_framework import status
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])  # Ensure that the user is authenticated
+def update_item_availability(request, item_id):
+    try:
+        item = MenuItem.objects.get(id=item_id)
+    except MenuItem.DoesNotExist:
+        return Response({"detail": "Menu item not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    # Get the new availability status from the request data
+    available_status = request.data.get('available')
+
+    if available_status is None:
+        return Response({"detail": "'available' field is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Update the 'available' field only
+    item.available = available_status
+    item.save()
+
+    # Return the updated item
+    return Response({"id": item.id, "available": item.available}, status=status.HTTP_200_OK)
