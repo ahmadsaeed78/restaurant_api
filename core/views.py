@@ -772,6 +772,7 @@ class LoginAPIView(APIView):
             return Response(
                 {
                     "access_token": str(access_token),
+                    "refresh_token": str(refresh),
                     "role": user.role,  # Return user role
                 },
                 status=status.HTTP_200_OK,
