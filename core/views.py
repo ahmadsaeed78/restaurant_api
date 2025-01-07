@@ -540,76 +540,87 @@ class UserRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 
-# Menu Views
-
-
-# views.py
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
-from .models import Menu
-from .serializers import MenuSerializer
 from rest_framework.response import Response
 from rest_framework import status
+from .models import Menu, MenuGroup, MenuItem
+from .serializers import MenuSerializer, MenuGroupSerializer, MenuItemSerializer
 
+# Menu Views
 class MenuListCreateAPIView(ListCreateAPIView):
     queryset = Menu.objects.all()
     serializer_class = MenuSerializer
-    permission_classes = [IsAuthenticated]  # Ensure the user is authenticated to perform actions
-    
+    permission_classes = [IsAuthenticated]
+
     def perform_create(self, serializer):
-        # Assign the user who created the menu (optional)
         serializer.save()
 
 class MenuRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     queryset = Menu.objects.all()
     serializer_class = MenuSerializer
-    permission_classes = [IsAuthenticated]  # Ensure the user is authenticated to perform actions
+    permission_classes = [IsAuthenticated]
 
     def perform_update(self, serializer):
-        # Optionally, update the modified by user (if needed)
         serializer.save(modified_by=self.request.user)
 
     def delete(self, request, *args, **kwargs):
         try:
-            instance = self.get_object()  # Get the menu instance
-            instance.delete()  # Delete the item
-            return Response(status=status.HTTP_204_NO_CONTENT)  # Return success with no content
+            instance = self.get_object()
+            instance.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
         except Menu.DoesNotExist:
             return Response({"error": "Menu item not found."}, status=status.HTTP_404_NOT_FOUND)
 
-
-
-
-
-
-# Menu Group Views
-class MenuGroupListCreateAPIView(generics.ListCreateAPIView):
+# MenuGroup Views
+class MenuGroupListCreateAPIView(ListCreateAPIView):
     queryset = MenuGroup.objects.all()
     serializer_class = MenuGroupSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
 
-class MenuGroupRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+    def perform_create(self, serializer):
+        serializer.save()
+
+class MenuGroupRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     queryset = MenuGroup.objects.all()
     serializer_class = MenuGroupSerializer
-    def get_permissions(self):
-        if self.action in ['list', 'retrieve']:  # Public GET requests
-            return [AllowAny()]
-        return [IsAuthenticated()]  # Other requests require authentication
+    permission_classes = [IsAuthenticated]
 
-# Menu Item Views
-class MenuItemListCreateAPIView(generics.ListCreateAPIView):
+    def perform_update(self, serializer):
+        serializer.save(modified_by=self.request.user)
+
+    def delete(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+            instance.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except MenuGroup.DoesNotExist:
+            return Response({"error": "Menu group not found."}, status=status.HTTP_404_NOT_FOUND)
+
+# MenuItem Views
+class MenuItemListCreateAPIView(ListCreateAPIView):
+    queryset = MenuItem.objects.all()
+    serializer_class = MenuItemSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]  # Public read, authenticated write
+
+    def perform_create(self, serializer):
+        serializer.save()
+
+class MenuItemRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     queryset = MenuItem.objects.all()
     serializer_class = MenuItemSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
-class MenuItemRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = MenuItem.objects.all()
-    serializer_class = MenuItemSerializer
-    def get_permissions(self):
-        if self.action in ['list', 'retrieve']:  # Public GET requests
-            return [AllowAny()]
-        return [IsAuthenticated()]  # Other requests require authentication
-    
+    def perform_update(self, serializer):
+        serializer.save()
+
+    def delete(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+            instance.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except MenuItem.DoesNotExist:
+            return Response({"error": "Menu item not found."}, status=status.HTTP_404_NOT_FOUND)
 
 from rest_framework.views import APIView
 from rest_framework.response import Response

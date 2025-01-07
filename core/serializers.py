@@ -67,7 +67,7 @@ class MenuSerializer(serializers.ModelSerializer):
 class MenuGroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = MenuGroup
-        fields = ['id', 'menu', 'name', 'description', 'parent_group', 'is_active', 'created_at', 'updated_at']
+        fields = ['id', 'menu', 'name', 'description', 'parent_group', 'is_active', 'image', 'created_at', 'updated_at']
 
 # Menu Item serializer
 class MenuItemSerializer(serializers.ModelSerializer):
