@@ -812,3 +812,49 @@ def update_item_availability(request, item_id):
 
     # Return the updated item
     return Response({"id": item.id, "available": item.available}, status=status.HTTP_200_OK)
+
+
+
+
+
+#manage unregistered orders apis
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+from .models import UnregisteredOrder
+from .serializers import UnregisteredOrderSerializer
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])  # Require authentication
+def get_unregistered_orders(request):
+    orders = UnregisteredOrder.objects.all()
+    serializer = UnregisteredOrderSerializer(orders, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])  # Require authentication
+def change_order_status(request, order_id, new_status):
+    try:
+        order = UnregisteredOrder.objects.get(id=order_id)
+        order.status = new_status
+        order.save()
+        return Response({"message": "Status updated successfully."}, status=status.HTTP_200_OK)
+    except Order.DoesNotExist:
+        return Response({"error": "Order not found."}, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])  # Require authentication
+def generate_bill(request, order_id):
+    try:
+        order = UnregisteredOrder.objects.get(id=order_id)
+        total_price = order.menu_item.price * order.quantity
+        return Response({
+            "customer_name": order.customer_name,
+            "menu_item": order.menu_item.name,
+            "quantity": order.quantity,
+            "total_price": total_price
+        }, status=status.HTTP_200_OK)
+    except Order.DoesNotExist:
+        return Response({"error": "Order not found."}, status=status.HTTP_404_NOT_FOUND)

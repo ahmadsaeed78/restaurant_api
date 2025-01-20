@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 from .views import TableListAPIView, ContactAPIView, update_item_availability
+from .views import get_unregistered_orders, change_order_status, generate_bill
 
 urlpatterns = [
     # User API
@@ -41,6 +42,11 @@ urlpatterns = [
     path('api/tables/', TableListAPIView.as_view(), name='table-list'),
     path('contact/', ContactAPIView.as_view(), name='contact_api'),
     path('menu_items/<int:item_id>/availability/', update_item_availability, name='update_item_availability'),
+    #unregistered orders apis
+    path('unregistered-orders/', get_unregistered_orders, name='get_unregistered_orders'),
+    path('change-status/<int:order_id>/<str:new_status>/', change_order_status, name='change_order_status'),
+    path('generate-bill/<int:order_id>/', generate_bill, name='generate_bill'),
+
 ]
 
 # For token authentication:
