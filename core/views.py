@@ -858,3 +858,17 @@ def generate_bill(request, order_id):
         }, status=status.HTTP_200_OK)
     except Order.DoesNotExist:
         return Response({"error": "Order not found."}, status=status.HTTP_404_NOT_FOUND)
+
+
+
+# views.py in Django
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from .models import MenuItem
+
+class MenuItemList(APIView):
+    def get(self, request):
+        menu_items = MenuItem.objects.all().values("name", "price", "description", "image")
+        return Response(menu_items)
+

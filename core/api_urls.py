@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .views import TableListAPIView, ContactAPIView, update_item_availability
+from .views import TableListAPIView, ContactAPIView, update_item_availability, MenuItemList
 from .views import get_unregistered_orders, change_order_status, generate_bill
 
 urlpatterns = [
@@ -46,6 +46,7 @@ urlpatterns = [
     path('unregistered-orders/', get_unregistered_orders, name='get_unregistered_orders'),
     path('change-status/<int:order_id>/<str:new_status>/', change_order_status, name='change_order_status'),
     path('generate-bill/<int:order_id>/', generate_bill, name='generate_bill'),
+    path('menu-items/', MenuItemList.as_view(), name='menu-items-list'),
 
 ]
 
