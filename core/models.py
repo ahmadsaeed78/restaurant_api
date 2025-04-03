@@ -129,3 +129,67 @@ class Contact(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.subject}"
+    
+
+
+
+
+
+
+
+#new addition
+    # models_multorder.py
+
+from django.db import models
+from django.conf import settings  # to reference your custom User model
+from .models import MenuItem, Table  # Import existing models
+
+class AggregateOrder(models.Model):
+    """
+    Represents a multi-item order (e.g., a cart order).
+    """
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.CASCADE, 
+        null=True, 
+        blank=True
+    )  # For registered users; can be null for guest orders.
+    table = models.ForeignKey(
+        Table, 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True
+    )  # Optional reference for table orders.
+    customer_name = models.CharField(max_length=255, blank=True, null=True)
+    total_price = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    status_choices = [
+        ('ordered', 'Ordered'),
+        ('delivered', 'Delivered'),
+        ('completed', 'Completed'),
+        ('paid', 'Paid'),
+    ]
+    status = models.CharField(
+        max_length=10, 
+        choices=status_choices, 
+        default='ordered'
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"AggregateOrder {self.id} - {self.customer_name or 'Guest'}"
+
+class AggregateOrderItem(models.Model):
+    """
+    Represents individual items within an AggregateOrder.
+    """
+    order = models.ForeignKey(
+        AggregateOrder, 
+        related_name="items", 
+        on_delete=models.CASCADE
+    )
+    menu_item = models.ForeignKey(MenuItem, on_delete=models.PROTECT)
+    quantity = models.PositiveIntegerField(default=1)
+    special_instructions = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.quantity} x {self.menu_item.name} (Order {self.order.id})"

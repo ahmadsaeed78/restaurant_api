@@ -2,6 +2,8 @@ from django.urls import path
 from . import views
 from .views import TableListAPIView, ContactAPIView, update_item_availability, MenuItemList
 from .views import get_unregistered_orders, change_order_status, generate_bill
+from .views_multorder import create_aggregate_order, AggregateOrderListAPIView, AggregateOrderRetrieveAPIView, update_order_status, download_bill
+from . import views_multorder
 
 urlpatterns = [
     # User API
@@ -47,6 +49,16 @@ urlpatterns = [
     path('change-status/<int:order_id>/<str:new_status>/', change_order_status, name='change_order_status'),
     path('generate-bill/<int:order_id>/', generate_bill, name='generate_bill'),
     path('menu-items/', MenuItemList.as_view(), name='menu-items-list'),
+
+
+
+    #new addition
+    path('aggregate_orders/', create_aggregate_order, name='create_aggregate_order'),
+    path('api/aggregate-orders/', AggregateOrderListAPIView.as_view(), name='aggregate_order_list'),
+    path('api/aggregate-orders/<int:pk>/', AggregateOrderRetrieveAPIView.as_view(), name='aggregate_order_detail'),
+    path("update-order-status/<int:order_id>/", update_order_status, name="update-order-status"),
+    path("download-bill/<int:order_id>/", download_bill, name="download-bill"),
+    path('generate-qrcode/<int:table_id>/', views_multorder.generate_qr_code, name='generate_qr_code'),
 
 ]
 
