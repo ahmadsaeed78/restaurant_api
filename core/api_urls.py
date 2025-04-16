@@ -2,8 +2,9 @@ from django.urls import path
 from . import views
 from .views import TableListAPIView, ContactAPIView, update_item_availability, MenuItemList
 from .views import get_unregistered_orders, change_order_status, generate_bill
-from .views_multorder import create_aggregate_order, AggregateOrderListAPIView, AggregateOrderRetrieveAPIView, update_order_status, download_bill
+from .views_multorder import create_aggregate_order, AggregateOrderListAPIView, AggregateOrderRetrieveAPIView, update_order_status, download_bill, ReservationCreateView, ReservationListView, approve_reservation
 from . import views_multorder
+from .views_multorder import TableStatusUpdateAPIView
 
 urlpatterns = [
     # User API
@@ -23,8 +24,8 @@ urlpatterns = [
     path('menu_items/<int:pk>/', views.MenuItemRetrieveUpdateDestroyAPIView.as_view(), name='menu-item-detail'),
 
     # Reservation APIs
-    path('reservations/', views.ReservationListCreateAPIView.as_view(), name='reservation-list-create'),
-    path('reservations/<int:pk>/', views.ReservationRetrieveUpdateDestroyAPIView.as_view(), name='reservation-detail'),
+    #path('reservations/', views.ReservationListCreateAPIView.as_view(), name='reservation-list-create'),
+    #path('reservations/<int:pk>/', views.ReservationRetrieveUpdateDestroyAPIView.as_view(), name='reservation-detail'),
 
     # Order APIs
     path('orders/', views.OrderListCreateAPIView.as_view(), name='order-list-create'),
@@ -59,7 +60,10 @@ urlpatterns = [
     path("update-order-status/<int:order_id>/", update_order_status, name="update-order-status"),
     path("download-bill/<int:order_id>/", download_bill, name="download-bill"),
     path('generate-qrcode/<int:table_id>/', views_multorder.generate_qr_code, name='generate_qr_code'),
-
+    path('reservations/', ReservationCreateView.as_view(), name='reservation-create'),
+    path('reservations/list/', ReservationListView.as_view(), name='reservation-list'),
+    path('reservations/approve/<int:reservation_id>/', approve_reservation, name='approve_reservation'),
+    path('table-status/<int:id>/', TableStatusUpdateAPIView.as_view(), name='table-status-update'),
 ]
 
 # For token authentication:

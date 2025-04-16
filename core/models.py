@@ -69,12 +69,6 @@ class MenuItem(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-class Reservation(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    date = models.DateField()
-    time = models.TimeField()
-    guests = models.IntegerField()
-    status = models.CharField(max_length=20, default="Pending")
 
 class Order(models.Model):
     STATUS_CHOICES = [
@@ -193,3 +187,20 @@ class AggregateOrderItem(models.Model):
 
     def __str__(self):
         return f"{self.quantity} x {self.menu_item.name} (Order {self.order.id})"
+
+
+
+class Reservation(models.Model):
+    STATUS_CHOICES = (
+        ('Pending', 'Pending'),
+        ('Approved', 'Approved'),
+    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    date = models.DateField()
+    time = models.TimeField()
+    guests = models.IntegerField()
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="Pending")
+    table = models.ForeignKey(Table, on_delete=models.SET_NULL, null=True, blank=True)  # Initially null
+
+    def __str__(self):
+        return f"Reservation for {self.user} on {self.date} at {self.time}"

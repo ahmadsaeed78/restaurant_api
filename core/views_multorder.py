@@ -3,7 +3,7 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .serializers_multorder import AggregateOrderSerializer
+from .serializers_multorder import AggregateOrderSerializerCreate
 
 @api_view(['POST'])
 def create_aggregate_order(request):
@@ -28,14 +28,19 @@ def create_aggregate_order(request):
         ]
     }
     """
-    serializer = AggregateOrderSerializer(data=request.data)
+    serializer = AggregateOrderSerializerCreate(data=request.data)
     if serializer.is_valid():
         order = serializer.save()
+        print(order)
         # If a table is specified, update its status to booked.
-        if order.table:
-            table = order.table
-            table.is_booked = True
-            table.save()
+        if order.table_id:
+            try:
+                table = Table.objects.get(id=order.table_id)
+                table.is_booked = True
+                table.save()
+                print(f"✅ Table {table.id} is now booked.")
+            except Table.DoesNotExist:
+                print("❌ Table not found.")
         return Response(AggregateOrderSerializer(order).data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -187,3 +192,235 @@ def generate_qr_code(request, table_id):
     
     return response
 
+
+# reservations/views.py
+from rest_framework import generics, permissions
+from .models import Reservation
+from .serializers_multorder import ReservationSerializer
+
+class ReservationCreateView(generics.CreateAPIView):
+    queryset = Reservation.objects.all()
+    serializer_class = ReservationSerializer
+    permission_classes = [permissions.IsAuthenticated]  # Require JWT authentication
+
+    def perform_create(self, serializer):
+        # Automatically set the user (from the token) and ensure status is Pending
+        serializer.save(user=self.request.user, status="Pending")
+
+
+
+from rest_framework import generics, permissions
+from .models import Reservation
+from .serializers_multorder import ReservationSerializer  # adjust import if needed
+
+class ReservationListView(generics.ListAPIView):
+    serializer_class = ReservationSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        # If the user is a chief, return all reservations.
+        if user.role == 'chief':
+            return Reservation.objects.all().order_by("-date")
+        # Otherwise, return only reservations for the user.
+        return Reservation.objects.filter(user=user).order_by("-date")
+    
+
+
+'''
+# views.py
+from datetime import datetime, timedelta
+from django.utils import timezone
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework import status
+from django.shortcuts import get_object_or_404
+
+from .models import Reservation, Table
+from .serializers_multorder import ApproveReservationSerializer
+from .tasks import assign_table_for_reservation, release_table_for_reservation
+
+
+@api_view(["PATCH"])
+@permission_classes([IsAuthenticated])
+def approve_reservation(request, reservation_id):
+    reservation = get_object_or_404(Reservation, id=reservation_id)
+    if reservation.status.lower() != "pending":
+        return Response({"error": "Reservation is not pending."}, status=status.HTTP_400_BAD_REQUEST)
+
+    reservation.status = "Approved"
+    reservation.save()
+
+    now = timezone.now()
+
+    # Schedule assignment 30 minutes before reservation date/time
+    assign_time = timezone.make_aware(
+        datetime.combine(reservation.date, reservation.time)
+    ) - timedelta(minutes=30)
+    delay = max(0, (assign_time - now).total_seconds())
+    assign_table_for_reservation.apply_async(args=[reservation.id], countdown=delay)
+
+    # Schedule release 1.5 hours after reservation date/time
+    release_time = timezone.make_aware(
+        datetime.combine(reservation.date, reservation.time)
+    ) + timedelta(hours=1, minutes=30)
+    delay_release = max(0, (release_time - now).total_seconds())
+    release_table_for_reservation.apply_async(args=[reservation.id], countdown=delay_release)
+
+    serializer = ApproveReservationSerializer(reservation)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+'''
+# views.py
+
+from datetime import datetime, timedelta
+from django.utils import timezone
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework import status
+from django.shortcuts import get_object_or_404
+
+from .models import Reservation
+from .serializers_multorder import ApproveReservationSerializer
+from .tasks import assign_table_for_reservation, release_table_for_reservation
+@api_view(["PATCH"])
+@permission_classes([IsAuthenticated])
+def approve_reservation(request, reservation_id):
+    reservation = get_object_or_404(Reservation, id=reservation_id)
+    if reservation.status.lower() != "pending":
+        return Response({"error": "Reservation is not pending."}, status=status.HTTP_400_BAD_REQUEST)
+
+    reservation.status = "Approved"
+    reservation.save()
+
+    # Get “now” in local timezone
+    now = timezone.localtime()
+
+    # Build the reservation datetime in local tz
+    reservation_dt = timezone.make_aware(
+        datetime.combine(reservation.date, reservation.time),
+        timezone.get_default_timezone()
+    )
+
+    # Schedule assignment 30 minutes before reservation
+    assign_time = reservation_dt - timedelta(minutes=2)
+    delay_assign = max(0, (assign_time - now).total_seconds())
+    print(reservation_dt)
+    print(timedelta(minutes=2))
+    print(assign_time)
+    print(assign_time - now)
+    print(now)
+    print(timezone.now())
+    print((assign_time - now).total_seconds())
+    print(delay_assign)
+    assign_table_for_reservation.apply_async(args=[reservation.id], countdown=delay_assign)
+
+    # Schedule release 1.5 hours after reservation
+    release_time = reservation_dt + timedelta(minutes=2)
+    delay_release = max(0, (release_time - now).total_seconds())
+    print(reservation_dt)
+    print(timedelta(minutes=2))
+    print(release_time)
+    print(release_time - now)
+    print(now)
+    print((release_time - now).total_seconds())
+    print(delay_release)
+    release_table_for_reservation.apply_async(args=[reservation.id], countdown=delay_release)
+
+    serializer = ApproveReservationSerializer(reservation)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+'''
+@api_view(["PATCH"])
+@permission_classes([IsAuthenticated])
+def approve_reservation(request, reservation_id):
+    reservation = get_object_or_404(Reservation, id=reservation_id)
+    if reservation.status.lower() != "pending":
+        return Response({"error": "Reservation is not pending."}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Mark reservation approved
+    reservation.status = "Approved"
+    reservation.save()
+
+    now = timezone.now()
+    # Combine date and time into a single timezone-aware datetime
+    reservation_dt = timezone.make_aware(datetime.combine(reservation.date, reservation.time))
+
+    # Schedule assignment 30 minutes before reservation
+    assign_time = reservation_dt - timedelta(minutes=2)
+    delay_assign = max(0, (assign_time - now).total_seconds())
+    print(reservation_dt)
+    print(timedelta(minutes=2))
+    print(assign_time)
+    print(assign_time - now)
+    print(now)
+    print((assign_time - now).total_seconds())
+    print(delay_assign)
+    assign_table_for_reservation.apply_async(args=[reservation.id], countdown=delay_assign)
+
+    # Schedule release 1.5 hours after reservation
+    release_time = reservation_dt + timedelta(minutes=2)
+    delay_release = max(0, (release_time - now).total_seconds())
+    print(reservation_dt)
+    print(timedelta(minutes=2))
+    print(release_time)
+    print(release_time - now)
+    print(now)
+    print((release_time - now).total_seconds())
+    print(delay_release)
+    release_table_for_reservation.apply_async(args=[reservation.id], countdown=delay_release)
+
+    serializer = ApproveReservationSerializer(reservation)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+# views.py
+
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework import status
+from django.shortcuts import get_object_or_404
+
+from .models import Reservation
+from .serializers_multorder import ApproveReservationSerializer
+from .tasks import assign_table_for_reservation, release_table_for_reservation
+
+@api_view(["PATCH"])
+@permission_classes([IsAuthenticated])
+def approve_reservation(request, reservation_id):
+    reservation = get_object_or_404(Reservation, id=reservation_id)
+    if reservation.status.lower() != "pending":
+        return Response({"error": "Reservation is not pending."}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Mark as approved immediately
+    reservation.status = "Approved"
+    reservation.save()
+
+    # === TEST SCHEDULING ===
+    # Assign table 2 minutes after approval
+    assign_table_for_reservation.apply_async(args=[reservation.id], countdown=1 * 60)
+    # Release table 4 minutes after approval
+    release_table_for_reservation.apply_async(args=[reservation.id], countdown=2 * 60)
+    # ========================
+
+    serializer = ApproveReservationSerializer(reservation)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+'''
+
+
+
+
+# views.py
+from rest_framework import generics
+from .models import Table
+from .serializers_multorder import TableStatusSerializer
+
+class TableStatusUpdateAPIView(generics.UpdateAPIView):
+    """
+    API endpoint for updating the table status.
+    Expects PATCH requests to update the `is_booked` field.
+    """
+    queryset = Table.objects.all()
+    serializer_class = TableStatusSerializer
+    lookup_field = 'id'
