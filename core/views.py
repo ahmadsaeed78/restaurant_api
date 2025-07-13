@@ -20,20 +20,33 @@ class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
 
-    
+'''
+
+
+
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from core.serializers import UserRegistrationSerializer
+from rest_framework.permissions import AllowAny
+from .serializers import UserRegistrationSerializer
 
 class UserRegistrationView(APIView):
+    permission_classes = [AllowAny]  # Allow anyone to register
+
     def post(self, request):
         serializer = UserRegistrationSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            user = serializer.save()
+            return Response({
+                'message': 'User registered successfully',
+                'user': {
+                    'username': user.username,
+                    'name': user.name,
+                    'email': user.email,
+                    'role': user.role
+                }
+            }, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    '''
 
 
 
@@ -872,3 +885,38 @@ class MenuItemList(APIView):
         menu_items = MenuItem.objects.all().values("name", "price", "description", "image")
         return Response(menu_items)
 
+
+
+
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+import joblib, os, pandas as pd
+
+class RecommendFoodByWeather(APIView):
+    def get(self, request):
+        weather = request.query_params.get('weather')  # e.g. "Summer"
+        if not weather:
+            return Response({"error": "Weather not provided"}, status=400)
+
+        # Load model
+        base = os.path.dirname(os.path.abspath(__file__)) + "/model/"
+        model = joblib.load(base + "food_weather_model.pkl")
+        vectorizer = joblib.load(base + "tfidf_vectorizer.pkl")
+        label_encoder = joblib.load(base + "label_encoder.pkl")
+
+        # Load the menu items
+        menu_df = pd.read_csv(base + "menu_weather_data.csv")
+        menu_df['text'] = menu_df['name'] + " " + menu_df['description']
+
+        # Predict weather label
+        weather_label = label_encoder.transform([weather])[0]
+
+        # Predict for all items
+        X = vectorizer.transform(menu_df['text'])
+        preds = model.predict(X)
+
+        # Filter items matching predicted weather
+        recommended = menu_df[preds == weather_label]
+
+        return Response(recommended[['name', 'description', 'weather']].to_dict(orient="records"))

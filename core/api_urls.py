@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
 from .views import TableListAPIView, ContactAPIView, update_item_availability, MenuItemList
-from .views import get_unregistered_orders, change_order_status, generate_bill
+from .views import RecommendFoodByWeather, get_unregistered_orders, change_order_status, generate_bill
 from .views_multorder import create_aggregate_order, AggregateOrderListAPIView, AggregateOrderRetrieveAPIView, update_order_status, download_bill, ReservationCreateView, ReservationListView, approve_reservation
 from . import views_multorder
 from .views_multorder import TableStatusUpdateAPIView
@@ -64,6 +64,7 @@ urlpatterns = [
     path('reservations/list/', ReservationListView.as_view(), name='reservation-list'),
     path('reservations/approve/<int:reservation_id>/', approve_reservation, name='approve_reservation'),
     path('table-status/<int:id>/', TableStatusUpdateAPIView.as_view(), name='table-status-update'),
+    path('recommend-weather/', RecommendFoodByWeather.as_view()),
 ]
 
 # For token authentication:

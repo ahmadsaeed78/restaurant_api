@@ -150,3 +150,23 @@ class ContactSerializer(serializers.ModelSerializer):
     class Meta:
         model = Contact
         fields = ['id', 'name', 'email', 'subject', 'phone_no', 'message']
+
+# User Registration serializer
+class UserRegistrationSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = User
+        fields = ['username', 'password', 'name', 'email', 'phone_number', 'role']
+
+    def create(self, validated_data):
+        user = User(
+            username=validated_data['username'],
+            name=validated_data['name'],
+            email=validated_data['email'],
+            phone_number=validated_data['phone_number'],
+            role=validated_data['role']
+        )
+        user.set_password(validated_data['password'])
+        user.save()
+        return user

@@ -20,10 +20,12 @@ from django.conf.urls.static import static
 from django.conf import settings
 from core import views
 from core.views import login_view, signup_view, logout_view, success_view, manage_tables, add_table, delete_table, change_status, generate_bill
+from core.views import UserRegistrationView
 urlpatterns = [
     path('admin/', admin.site.urls),
     #path('api/', include('core.urls')),
     path('api/', include('core.api_urls')),
+    path('api/register/', UserRegistrationView.as_view(), name='register'),
     path('', views.home, name='home'),
     path('about/', views.about, name='about'),
     path('menu/', views.menu_view, name='menu'),
