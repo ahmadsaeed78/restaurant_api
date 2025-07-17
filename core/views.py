@@ -920,3 +920,23 @@ class RecommendFoodByWeather(APIView):
         recommended = menu_df[preds == weather_label]
 
         return Response(recommended[['name', 'description', 'weather']].to_dict(orient="records"))
+
+from rest_framework.generics import ListAPIView
+from .serializers import ContactSerializer
+
+class TestimonialListAPIView(ListAPIView):
+    permission_classes = [AllowAny]
+    queryset = Contact.objects.all().order_by('-id')  # latest first
+    serializer_class = ContactSerializer
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        data = []
+        for obj in queryset:
+            data.append({
+                'name': obj.name,
+                'subject': obj.subject,
+                'message': obj.message,
+                'avatar': '/static/avatar.png'  # static avatar path, update as needed
+            })
+        return Response(data)

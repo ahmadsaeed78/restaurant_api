@@ -5,6 +5,7 @@ from .views import RecommendFoodByWeather, get_unregistered_orders, change_order
 from .views_multorder import create_aggregate_order, AggregateOrderListAPIView, AggregateOrderRetrieveAPIView, update_order_status, download_bill, ReservationCreateView, ReservationListView, approve_reservation
 from . import views_multorder
 from .views_multorder import TableStatusUpdateAPIView
+from .views import TestimonialListAPIView
 
 urlpatterns = [
     # User API
@@ -65,6 +66,7 @@ urlpatterns = [
     path('reservations/approve/<int:reservation_id>/', approve_reservation, name='approve_reservation'),
     path('table-status/<int:id>/', TableStatusUpdateAPIView.as_view(), name='table-status-update'),
     path('recommend-weather/', RecommendFoodByWeather.as_view()),
+    path('testimonials/', TestimonialListAPIView.as_view(), name='testimonial-list'),
 ]
 
 # For token authentication:
