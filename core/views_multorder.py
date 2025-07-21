@@ -168,10 +168,11 @@ def generate_qr_code(request, table_id):
     scheme = "https" if request.is_secure() else "http"
     #host will be below when deployed
     #host = request.get_host()
-    host = "https://frontend-brown-alpha-12.vercel.app"
+    host = "frontend-brown-alpha-12.vercel.app"
     
     # URL to be encoded into the QR code; now using '/menu'
-    url = f"{scheme}://{host}/menu/{table.table_number}"
+    #url = f"{scheme}://{host}/menu/{table.table_number}"
+    url = f"{host}/menu/{table.table_number}"
 
     # Create QR code
     qr = qrcode.QRCode(
