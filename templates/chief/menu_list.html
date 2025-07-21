@@ -1,0 +1,152 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chief Dashboard</title>
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <style>
+        /* menu_management.css */
+        table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 1px solid #ddd;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+}
+
+img {
+    max-width: 50px;
+    max-height: 50px;
+}
+
+    </style>
+    <style>
+        /* General button styling */
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #fff;
+            background-color: #007bff; /* Primary color */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none; /* Remove underline on links */
+            transition: background-color 0.3s ease;
+        }
+    
+        /* Hover effect */
+        .btn:hover {
+            background-color: #0056b3; /* Darker shade for hover */
+        }
+    
+        /* Disabled button */
+        .btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+    
+        /* Different button colors */
+        .btn-primary {
+            background-color: #007bff;
+        }
+    
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+    
+        .btn-success {
+            background-color: #28a745;
+        }
+    
+        .btn-danger {
+            background-color: #dc3545;
+        }
+    
+        .btn-warning {
+            background-color: #ffc107;
+            color: #000;
+        }
+    
+        /* Unavailable button */
+        .btn-unavailable {
+            background-color: #6c757d; /* Dark gray for unavailability */
+            color: #fff;
+            cursor: not-allowed;
+            opacity: 0.7; /* Slightly faded to indicate unavailability */
+        }
+    
+        /* Size variations */
+        .btn-small {
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+    
+        .btn-large {
+            padding: 15px 30px;
+            font-size: 18px;
+        }
+    </style>
+    
+</head>
+<body>
+    <div class="dashboard">
+        <header>
+            <h1>Chief Dashboard</h1>
+            <nav>
+                <ul>
+                    <li><a href="#">Profile</a></li>
+                    <li><a href="#">Manage Users</a></li>
+                    <li><a href="#">Reports</a></li>
+                    <li><a href="#">Logout</a></li>
+                </ul>
+            </nav>
+        </header>
+        <main>
+            <h2>Menu List</h2>
+
+<button onclick="window.location.href='{% url 'add_menu' %}'">Add Menu</button>
+
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Image</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for menu in menus %}
+        <tr>
+            <td>{{ menu.name }}</td>
+            <td>{{ menu.description }}</td>
+            <td>
+                {% if menu.image %}
+                    <img src="{{ menu.image.url }}" alt="{{ menu.name }}" style="width: 50px;">
+                {% else %}
+                    No image
+                {% endif %}
+            </td>
+            <td>
+                <a href="{% url 'update_menu' menu.id %}" class="btn btn-warning btn-small">Update</a>
+                <a href="{% url 'delete_menu' menu.id %}" class="btn btn-danger btn-small">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+        </main>
+    </div>
+</body>
+</html>
+

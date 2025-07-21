@@ -1,0 +1,124 @@
+/* menu.css */
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+header nav {
+    background-color: #007bff;
+    padding: 15px;
+}
+
+header nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+header nav ul li {
+    display: inline;
+}
+
+header nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+header nav ul li a:hover {
+    text-decoration: none;
+    color: rgb(197, 228, 255);
+}
+
+.menu {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+.menu h1 {
+    text-align: center;
+    font-size: 2em;
+    color: #333;
+    margin-bottom: 20px;
+}
+/*
+.menu-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.menu-item {
+    border: 1px solid #ddd;
+    padding: 15px;
+    width: 200px;
+    text-align: center;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    background-color: #fafafa;
+}*/
+/* Style for the menu items container */
+.menu-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px; /* Space between items */
+    justify-content: center;
+}
+
+/* Style for each menu item */
+.menu-item {
+    width: 200px; /* Adjust width as needed */
+    text-align: center;
+}
+
+/* Image container to set fixed dimensions and uniform aspect ratio */
+.menu-item-image-container {
+    width: 100%;
+    height: 150px; /* Set a fixed height for consistency */
+    overflow: hidden; /* Ensures images that are too large are clipped */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px; /* Optional: rounded corners */
+}
+
+/* Style for the image itself */
+.menu-item-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures the image covers the area without stretching */
+    border-radius: 8px; /* Optional: rounded corners */
+}
+
+
+.menu-item h2 {
+    font-size: 1.2em;
+    color: #333;
+    margin: 10px 0;
+}
+
+.menu-item img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+.menu-item p {
+    margin: 5px 0;
+    color: #666;
+}
+
+.menu-item .price {
+    font-weight: bold;
+    color: #007bff;
+}

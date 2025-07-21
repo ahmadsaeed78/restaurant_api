@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Scan QR Code</title>
+</head>
+<body>
+    <h1>Scan to View Menu</h1>
+    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data={{ request.build_absolute_uri|add:scan_menu }}" alt="QR Code">
+</body>
+</html>

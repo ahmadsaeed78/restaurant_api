@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Unregistered Orders</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            color: #343a40;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 2.5rem;
+            color: #ff6f61;
+        }
+
+        table {
+            width: 90%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        table thead {
+            background-color: #ff6f61;
+            color: #ffffff;
+        }
+
+        table thead th {
+            padding: 15px;
+            font-size: 1.2rem;
+        }
+
+        table tbody tr {
+            border-bottom: 1px solid #ddd;
+        }
+
+        table tbody tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        table tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        table tbody td {
+            padding: 15px;
+            text-align: center;
+            font-size: 1rem;
+        }
+
+        table tbody td a {
+            text-decoration: none;
+            color: #ffffff;
+            padding: 8px 12px;
+            background-color: #17a2b8;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        table tbody td a:hover {
+            background-color: #138496;
+        }
+
+        table tbody td strong {
+            color: #28a745;
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 768px) {
+            table {
+                width: 100%;
+                font-size: 0.9rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Manage Unregistered Orders</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Customer Name</th>
+                <th>Menu Item</th>
+                <th>Quantity</th>
+                <th>Table No</th>
+                <th>Date Time</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td>{{ order.customer_name }}</td>
+                <td>{{ order.menu_item.name }}</td>
+                <td>{{ order.quantity }}</td>
+                <td>{{ order.table.table_number }}</td>
+                <td>{{ order.order_time }}</td>
+                <td>{{ order.get_status_display }}</td>
+                <td>
+                    {% if order.status == 'ordered' %}
+                    <a href="{% url 'change_status' order.id 'delivered' %}">Mark as Delivered</a>
+                    {% elif order.status == 'delivered' %}
+                    <a href="{% url 'change_status' order.id 'completed' %}">Mark as Completed</a>
+                    {% elif order.status == 'completed' %}
+                    <a href="{% url 'generate_bill' order.id %}">Generate Bill</a>
+                    <a href="{% url 'change_status' order.id 'paid' %}">Paid</a>
+                    {% elif order.status == 'paid' %}
+                    <strong>Paid</strong>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Tables</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            color: #343a40;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 2.5rem;
+            color: #007bff;
+        }
+
+        a {
+            text-decoration: none;
+            color: #ffffff;
+            background-color: #28a745;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        a:hover {
+            background-color: #218838;
+        }
+
+        table {
+            width: 90%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        table thead {
+            background-color: #007bff;
+            color: #ffffff;
+        }
+
+        table thead th {
+            padding: 15px;
+            font-size: 1.2rem;
+        }
+
+        table tbody tr {
+            border-bottom: 1px solid #ddd;
+        }
+
+        table tbody tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        table tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        table tbody td {
+            padding: 15px;
+            text-align: center;
+            font-size: 1rem;
+        }
+
+        table tbody td a {
+            text-decoration: none;
+            color: #ffffff;
+            padding: 8px 12px;
+            background-color: #dc3545;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        table tbody td a:hover {
+            background-color: #c82333;
+        }
+
+        .add-button {
+            display: block;
+            width: fit-content;
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        .status {
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .status.booked {
+            color: #dc3545;
+        }
+
+        .status.available {
+            color: #28a745;
+        }
+
+        @media (max-width: 768px) {
+            table {
+                width: 100%;
+                font-size: 0.9rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            a, .add-button a {
+                font-size: 0.8rem;
+                padding: 8px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Manage Tables</h1>
+    <div class="add-button">
+        <a href="{% url 'add_table' %}">Add New Table</a>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Table Number</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for table in tables %}
+            <tr>
+                <td>{{ table.table_number }}</td>
+                <td>
+                    <span class="status {% if table.is_booked %}booked{% else %}available{% endif %}">
+                        {% if table.is_booked %}
+                        Booked
+                        {% else %}
+                        Available
+                        {% endif %}
+                    </span>
+                </td>
+                <td>
+                    <a href="{% url 'delete_table' table.id %}">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
